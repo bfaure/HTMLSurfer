@@ -17,7 +17,8 @@ def load_page(url):
     try:
         return urlopen(url,timeout=2).read().decode('utf-8')
     except Exception as e:
-        log.write("%s\n"%e)
+        try: log.write("%s\n"%e)
+        except: log.write("Couldn't write out error!")
         log.flush()
         return ''
 
@@ -66,18 +67,19 @@ def concurrent_surf(urls):
         thread.start()
     start_time=time()
     while True:
-        print("\rVisited: %d  |  Errors: %d  |  Time: %d"%(visited,errors,time()-start_time),end="\r")
-        all_done=True
+        threads_alive=0
         for thread in threads:
-            if thread.is_alive(): all_done=False
-        if all_done or stop_threads: break
+            if thread.is_alive(): threads_alive+=1
+        if threads_alive==0 or stop_threads: break
+        print("\rVisited: %d  |  Errors: %d  |  Workers: %d  |  Time: %d"%(visited,errors,threads_alive,time()-start_time),end="\r")
     print("\n")
     print("Process complete in %d seconds"%(time()-start_time))
     
 signal.signal(signal.SIGINT,lifeguard)
 surfs_up_at=["https://wikipedia.org","https://github.com","https://youtube.com","https://reddit.com",
     "https://cnn.com","https://yahoo.com","https://apple.com","https://nytimes.com",
-    "https://liveleak.com","https://imdb.com"]
+    "https://liveleak.com","https://imdb.com","https://msnbc.com","https://weather.com",
+    "https://amazon.com","https://facebook.com","https://microsoft.com","https://ibm.com"]
 print("Surfing starting with %d threads, press Ctrl+C to exit."%len(surfs_up_at))
 concurrent_surf(surfs_up_at)
 
