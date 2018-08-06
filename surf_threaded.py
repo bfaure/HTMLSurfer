@@ -12,6 +12,7 @@ seen={}
 errors=0
 stop_threads=False
 buffer=[]
+pause_threads=False
 
 def buffer_manager():
     global buffer 
@@ -26,7 +27,24 @@ def buffer_manager():
 
 def lifeguard(sig,frame):
     global stop_threads
-    stop_threads=True
+    global pause_threads
+    stop_threads=True 
+
+    # pause_threads=True
+    # print("\n")
+    # while True:
+    #     descision=input("What would you like to do ([R] Resume [S] Stop): ")
+    #     if descision in ['r','R','resume']: 
+    #         pause_threads=False
+    #         return
+    #     elif descision in ['s','S','stop']: 
+    #         stop_threads=True 
+    #         return 
+    #     else:
+    #         print("Try again")
+
+
+
 
 def load_page(url):
     global log
@@ -64,6 +82,10 @@ def surf(url):
     global buffer
     links=get_links(url)
     while len(links)>0:
+        if pause_threads:
+            while True:
+                if stop_threads: break 
+                sleep(1)
         if stop_threads: return        
         link,links=links[0],links[1:]
         if debug: print("surf: %s"%link)
