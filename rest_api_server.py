@@ -21,16 +21,10 @@ def load_data():
     return data 
 
 def get_results(query):
-    if query in data: 
-        return data[query]
-    if query+'/' in data:
-        return data[query+'/']
-    return "NULL"
-
-
-class Test(Resource):
-    def get(self):
-        return {'test':'test'}
+    ct=0
+    if query in data:     ct+=data[query]
+    if query+'/' in data: ct+=data[query+'/']
+    return ct
 
 class LinkCt(Resource):
     def get(self,url): 
@@ -38,8 +32,6 @@ class LinkCt(Resource):
         linked_to_ct=get_results(true_url)
         return {'count':linked_to_ct}
 
-
-api.add_resource(Test,'/test')  
 api.add_resource(LinkCt,'/count/<url>')
 
 if __name__=='__main__':
